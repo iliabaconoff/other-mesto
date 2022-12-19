@@ -44,9 +44,9 @@ openEditPop.addEventListener("click", () => {
   jobInput.value = profileBio.textContent
 });
 
-openAddPop.addEventListener("click", {
+openAddPop.addEventListener("click",() => {
   openClose();
-  
+
 })
 
 closePop.addEventListener("click", () => {
