@@ -15,9 +15,9 @@ const addPopUp = document.querySelector(".popup__add");
 let popAddForm = document.querySelector(".popup__form-add");
 let titleInput = popAddForm.querySelector(".popup__input_type_title");
 let linkInput = popAddForm.querySelector(".popup__input_type_link");
-let cardTitle = document.querySelector('.card__title')
-let cardImage = document.querySelector('.card__image')
-const likeButton = document.querySelectorAll('.card__like')
+let cardTitle = document.querySelector('.card__title');
+let cardImage = document.querySelector('.card__image');
+const likeButton = document.querySelectorAll('.card__like');
 
 function openClose (popEl) {
   popEl.classList.toggle('popup_opened')
@@ -71,6 +71,8 @@ function renderCards(cards = initialCards) {
 }
 
 //card template 
+
+// https://loremflickr.com/320/240
 function addCard(card) {
   const cardTemplate = `
     <div class="card">
@@ -79,9 +81,10 @@ function addCard(card) {
         alt="${card.name}"
         class="card__image"
       >
+      <button class="card__delete" type="button" arial-label="Удалить место" name="card__delete" id="card__delete"></button>
       <div class="card__description">
         <h2 class="card__title">${card.name}</h2>
-        <button class="card__like" type="button"></button>
+        <button class="card__like" type="button" arial-label="Нравится" namde="card__like" id="card__like"></button>
       </div>
     </div>
 `
