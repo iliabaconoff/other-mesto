@@ -1,24 +1,46 @@
+const initialCards = [
+  {
+    name: 'Архыз',
+    link: 'https://pictures.s3.yandex.net/frontend-developer/cards-compressed/arkhyz.jpg'
+  },
+  {
+    name: 'Челябинская область',
+    link: 'https://pictures.s3.yandex.net/frontend-developer/cards-compressed/chelyabinsk-oblast.jpg'
+  },
+  {
+    name: 'Иваново',
+    link: 'https://pictures.s3.yandex.net/frontend-developer/cards-compressed/ivanovo.jpg'
+  },
+  {
+    name: 'Камчатка',
+    link: 'https://pictures.s3.yandex.net/frontend-developer/cards-compressed/kamchatka.jpg'
+  },
+  {
+    name: 'Холмогорский район',
+    link: 'https://pictures.s3.yandex.net/frontend-developer/cards-compressed/kholmogorsky-rayon.jpg'
+  },
+  {
+    name: 'Байкал',
+    link: 'https://pictures.s3.yandex.net/frontend-developer/cards-compressed/baikal.jpg'
+  }
+];
+
 // Edit Profile Popup
 const popup = document.querySelectorAll('.popup')
 const openEditPop = document.querySelector(".profile__button-edit");
 const closePop = document.querySelectorAll(".popup__close");
 const editPopUp = document.querySelector(".popup__edit");
 const submitPop = document.querySelector(".popup__save");
-let popEditForm = document.querySelector(".popup__form-edit");
-let nameInput = popEditForm.querySelector(".popup__input_type_name");
-let jobInput = popEditForm.querySelector(".popup__input_type_bio");
-let profileName = document.querySelector(".profile__name");
-let profileBio = document.querySelector(".profile__bio");
+const popEditForm = document.querySelector(".popup__form-edit");
+const nameInput = popEditForm.querySelector(".popup__input_type_name");
+const jobInput = popEditForm.querySelector(".popup__input_type_bio");
+const profileName = document.querySelector(".profile__name");
+const profileBio = document.querySelector(".profile__bio");
 // Add Cards Popup
 const openAddPop = document.querySelector('.profile__button-add');
 const addPopUp = document.querySelector(".popup__add");
-let popAddForm = document.querySelector(".popup__form-add");
-let titleInput = popAddForm.querySelector(".popup__input_type_title");
-let linkInput = popAddForm.querySelector(".popup__input_type_link");
-let cardTitle = document.querySelector('.card__title');
-let cardImage = document.querySelector('.card__image');
-const likeButton = document.querySelectorAll('.card__like');
-
+const popAddForm = document.querySelector(".popup__form-add");
+//openClose popup function
 function openClose (popEl) {
   popEl.classList.toggle('popup_opened')
 }
@@ -34,11 +56,10 @@ function editFormSubmitHandler(evt) {
 // Get title and link for new cards
 function addFormSubmitHandler (evt) {
   evt.preventDefault();
+  const titleInput = popAddForm.querySelector(".popup__input_type_title");
+  const linkInput = popAddForm.querySelector(".popup__input_type_link");
+  cardsRoot.prepend(addCard(titleInput.value, linkInput.value));
   openClose(addPopUp);
-  const formData = new FormData(evt.target)
-  const newCard = {name: formData.get('name'), link:formData.get('link')}
-  initialCards.splice(0,0,newCard)
-  addCard(newCard)
   evt.target.reset()
 }
 
@@ -65,34 +86,40 @@ popAddForm.addEventListener("submit", addFormSubmitHandler);
 //finding parental object
 const cardsRoot = document.querySelector('.cards');
 
-//insert cards into parental object
-function renderCards(cards = initialCards) {
-  initialCards.forEach(addCard)
+//card template
+// https://loremflickr.com/1024/720
+function addCard(name, link) {
+  const cardTemplate = document.querySelector('#card__template').content; 
+  const newCard = cardTemplate.querySelector('.card').cloneNode(true);
+  const cardTitle = newCard.querySelector('.card__title');
+  const cardImage = newCard.querySelector('.card__image');
+  const cardLike = newCard.querySelector('.card__like');
+  const cardDelete = newCard.querySelector('.card__delete');
+
+  cardImage.src = link;
+  cardTitle.textContent = name;
+  cardImage.alt = name;
+
+  cardLike.addEventListener('click', (evt) => { evt.target.classList.toggle('.card__like_pressed');});
+  cardDelete.addEventListener('click', () => { newCard.remove()});
+  cardImage.addEventListener('click', () => { 
+    const popImageForm = document.querySelector('.popup__image');
+    openClose(popImageForm);
+
+    const imageFullsize = popImageForm.querySelector('.popup__image-fullsize');
+    const titleFullsize = popImageForm.querySelector('.popup__image-title');
+    imageFullsize.src = link; 
+    titleFullsize.textContent = name;
+    imageFullsize.alt = name;
+
+  })
+  return newCard;
 }
 
-//card template 
-
-// https://loremflickr.com/320/240
-function addCard(card) {
-  const cardTemplate = `
-    <div class="card">
-      <img
-        src="${card.link}"
-        alt="${card.name}"
-        class="card__image"
-      >
-      <button class="card__delete" type="button" arial-label="Удалить место" name="card__delete" id="card__delete"></button>
-      <div class="card__description">
-        <h2 class="card__title">${card.name}</h2>
-        <button class="card__like" type="button" arial-label="Нравится" namde="card__like" id="card__like"></button>
-      </div>
-    </div>
-`
-  cardsRoot.insertAdjacentHTML('afterbegin', cardTemplate)
-}
-
-function initCardEventListeners() {
-  likeButton.addEventListener('click', () => { likeButton.classList.toggle('.card__like_pressed'); })
+//insert cards array into parental object
+function renderCards() {
+  const baseArray = initialCards.map(card => addCard(card.name, card.link));
+  cardsRoot.prepend(...baseArray);
 }
 
 renderCards()
